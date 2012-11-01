@@ -1,4 +1,88 @@
+##################################################################################
+#
+# ATS_DEPGEN (OUTPUT SRC)
+#
+# Generate dependencies for a single source file.
+# Call it like this: ATS_DEPGEN (A_VAR ${A_SINGLE_FILE})
+#
+# The output is a STRING, not a LIST.
+#
+##################################################################################
+MACRO (ATS_DEPGEN OUTPUT SRC)
 
+	IF (${ARGC} GREATER 2)
+		MESSAGE (FATAL_ERROR "Only support one source file!")
+	ENDIF ()
+
+	MESSAGE (STATUS "*********************************")
+	MESSAGE (STATUS "Computing dependencies for ${SRC}")
+
+	ATS_AUX_UNIFY_PATH (${SRC} SRC)
+
+	ATS_AUX_LIST_TO_STRING ("${ATS_INCLUDE}" _TEXT_INCLUDE)
+
+	IF (${SRC} MATCHES "\\.dats$")
+		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --dynamic ${SRC}")
+		EXECUTE_PROCESS (
+			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --dynamic ${SRC}
+			RESULT_VARIABLE _ATS_DEPGEN_RESULT
+			OUTPUT_VARIABLE _ATS_DEPGEN_OUTPUT
+			ERROR_VARIABLE _ATS_DEPGEN_ERROR
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_STRIP_TRAILING_WHITESPACE)
+	ELSE ()
+		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --static ${SRC}")
+		EXECUTE_PROCESS (
+			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --static ${SRC}
+			RESULT_VARIABLE _ATS_DEPGEN_RESULT
+			OUTPUT_VARIABLE _ATS_DEPGEN_OUTPUT
+			ERROR_VARIABLE _ATS_DEPGEN_ERROR
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_STRIP_TRAILING_WHITESPACE)
+	ENDIF ()
+
+	STRING (REGEX REPLACE "^.*:" "" ${OUTPUT} ${_ATS_DEPGEN_OUTPUT})
+    STRING (STRIP "${${OUTPUT}}" ${OUTPUT})
+
+
+    ATS_AUX_STRING_TO_LIST (${${OUTPUT}} ${OUTPUT})
+    ATS_DEPGEN_C (${OUTPUT})
+    FOREACH (_E ${${OUTPUT}})
+    	MESSAGE (STATUS "Result: ${_E}")
+    ENDFOREACH ()
+
+    UNSET (_E)
+	UNSET (_ATS_DEPGEN_RESULT)
+	UNSET (_ATS_DEPGEN_OUTPUT)
+	UNSET (_ATS_DEPGEN_ERROR)
+	UNSET (_TEXT_INCLUDE)
+ENDMACRO ()
+
+##################################################################################
+#
+# ATS_DEPGEN_C (DEP)
+#
+# Expend dependencies for generated C files.
+# For example: 
+# 	If we have 		1.sats <- 2.sats
+#	Then we add 	1_sats.c <- 2_sats.c
+#
+# This is useful when 1.sats inludes a HATS file. When the HATS file updates, 
+# 1.sats is not changed, but 1_sats.c is changed. And since 2.sats depends on
+# 1.sats and it is not changed, 2_sats.c is not recompiled. However, it should 
+# be recompiled since the actual meaning of 1.sats has been changed.
+#
+# The output is a STRING, not a LIST.
+#
+##################################################################################
+MACRO (ATS_DEPGEN_C DEP)
+	FOREACH (_E ${${DEP}})
+		IF (${_E} MATCHES "\\.sats$|\\.dats$")
+			ATS_AUX_GET_C_FILE_NAME (${_E} _C)
+			LIST (APPEND ${DEP} ${_C})
+		ENDIF ()
+	ENDFOREACH ()
+ENDMACRO ()
 
 MACRO (ATS_TYPE_CHECK SRC)
 	EXECUTE_PROCESS (
@@ -15,36 +99,65 @@ MACRO (ATS_TYPE_CHECK SRC)
 	UNSET (_ATS_TC_ERROR)
 ENDMACRO ()
 
-MACRO (ATS_COMPILE OUTPUT SRC)
+
+##################################################################################
+#
+# ATS_AUX_UNIFY_PATH (IN OUT)
+#
+# Convert IN into absolute path and save it into OUT.
+# IN is expected to be a relative path starting from ${CMAKE_CURRENT_LIST_DIR}
+# IN should be a single file.
+#
+##################################################################################
+MACRO (ATS_AUX_UNIFY_PATH IN OUT)
+	GET_FILENAME_COMPONENT (${OUT} ${IN} ABSOLUTE)
+	FILE (RELATIVE_PATH ${OUT} ${CMAKE_CURRENT_LIST_DIR} ${${OUT}})
+	SET (${OUT} ${CMAKE_CURRENT_LIST_DIR}/${${OUT}})
+	STRING (STRIP ${${OUT}} ${OUT})
+ENDMACRO ()
+
+
+##################################################################################
+#
+# ATS_COMPILE (OUTPUT ...)
+#
+# Compile all the sources into C files, and store output C filenames (full path)
+# into OUTPUT as a list. Dependencies are resolved automatically.
+#
+# Note, OUTPUT is a LIST, not a STRING.
+#
+##################################################################################
+MACRO (ATS_COMPILE OUTPUT)
 
 	IF (NOT "${OUTPUT}" MATCHES "^${OUTPUT}$")
 		MESSAGE (STATUS "Parameter should be a variable instead of the value of variable!")
 		MESSAGE (FATAL_ERROR "Example: ATS_COMPILE (C_OUTPUT, ${SOURCE_FILES})")
 	ENDIF ()
 
-	SET (_ATS_FILES ${SRC} ${ARGN})
+	SET (_ATS_FILES ${ARGN})
 	SET (_C_OUTPUT)
-	SET (_PREFIX_SRC ${PROJECT_SOURCE_DIR})
 
 	FOREACH (_ATS_FILE ${_ATS_FILES})
+
+		ATS_AUX_UNIFY_PATH (${_ATS_FILE} _ATS_FILE)
+		ATS_DEPGEN (_DEPENDENCY ${_ATS_FILE})
+
 		#FOR STATIC FILES
 		IF (${_ATS_FILE} MATCHES "\\.sats$")
-			STRING(REPLACE ".sats" "_sats.c" _SATS_C ${_ATS_FILE})
-			GET_FILENAME_COMPONENT (_SATS_C ${_SATS_C} NAME)
+			ATS_AUX_GET_C_FILE_NAME (${_ATS_FILE} _SATS_C)
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_SATS_C} 
-			    COMMAND atsopt ${ATS_INCLUDE} --output ${_SATS_C} --static ${_PREFIX_SRC}/${_ATS_FILE}
-			    DEPENDS ${_PREFIX_SRC}/${_ATS_FILE}
+			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_SATS_C} --static ${_ATS_FILE}
+			    DEPENDS ${_ATS_FILE} ${_DEPENDENCY}
 		  	)
 		  	LIST (APPEND _C_OUTPUT ${_SATS_C})
 		#FOR DYNAMIC FILES
 		ELSEIF (${_ATS_FILE} MATCHES "\\.dats$")
-			STRING(REPLACE ".dats" "_dats.c" _DATS_C ${_ATS_FILE})
-			GET_FILENAME_COMPONENT (_DATS_C ${_DATS_C} NAME)
+			ATS_AUX_GET_C_FILE_NAME (${_ATS_FILE} _DATS_C)
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_DATS_C} 
-			    COMMAND atsopt ${ATS_INCLUDE} --output ${_DATS_C} --dynamic ${_PREFIX_SRC}/${_ATS_FILE}
-			    DEPENDS ${_PREFIX_SRC}/${_ATS_FILE}
+			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_DATS_C} --dynamic ${_ATS_FILE}
+			    DEPENDS ${_ATS_FILE} ${_DEPENDENCY}
 		  	)
 		  	LIST (APPEND _C_OUTPUT ${_DATS_C})
 		ENDIF ()
@@ -58,7 +171,7 @@ MACRO (ATS_COMPILE OUTPUT SRC)
 	UNSET (_SATS_C)
 	UNSET (_DATS_C)
 	UNSET (_PREFIX_SRC)
-
+	UNSET (_DEPENDENCY)
 ENDMACRO ()
 
 MACRO (ATS_INCLUDE_RESET)
@@ -66,39 +179,61 @@ MACRO (ATS_INCLUDE_RESET)
 	SET (ATS_INCLUDE)
 ENDMACRO ()
 
+
+##################################################################################
+#
+# ATS_INCLUDE (...)
+#
+# Side Effect: ATS_INCLUDE
+#
+# Append all paths as INCLUDE paths, for ATSCC/ATSOPT to find SATS/HATS files.
+# It operates ATS_INCLUDE, which is a LIST.
+#
+##################################################################################
 MACRO (ATS_INCLUDE)
-	SET (_INCLUDE)
 	FOREACH (_PATH ${ARGN})
-		SET (_INCLUDE ${_INCLUDE} -IATS ${_PATH})
+		ATS_AUX_UNIFY_PATH (${_PATH} _PATH)
+		LIST (APPEND _INCLUDE -IATS "${_PATH}")
 	ENDFOREACH ()
 
-	STRING (STRIP "${ATS_INCLUDE} ${_INCLUDE}" ATS_INCLUDE)
+	LIST (APPEND ATS_INCLUDE ${_INCLUDE})
+	STRING (STRIP "${ATS_INCLUDE}" ATS_INCLUDE)
+
 	UNSET (_INCLUDE)
+	UNSET (_PATH)
 ENDMACRO ()
 
-MACRO (ATS_DEPGEN SRC)
 
-	IF (${SRC} MATCHES "\\.dats$")
-		EXECUTE_PROCESS (
-			COMMAND atsopt --depgen=1 --dynamic ${SRC}
-			RESULT_VARIABLE _ATS_DEPGEN_RESULT
-			OUTPUT_VARIABLE _ATS_DEPGEN_OUTPUT
-			ERROR_VARIABLE _ATS_DEPGEN_ERROR
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_STRIP_TRAILING_WHITESPACE)
-	ELSE ()
-		EXECUTE_PROCESS (
-			COMMAND atsopt --depgen=1 --static ${SRC}
-			RESULT_VARIABLE _ATS_DEPGEN_RESULT
-			OUTPUT_VARIABLE _ATS_DEPGEN_OUTPUT
-			ERROR_VARIABLE _ATS_DEPGEN_ERROR
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_STRIP_TRAILING_WHITESPACE)
+MACRO (ATS_AUX_LIST_TO_STRING IN OUT)
+	IF (${ARGC} GREATER 2)
+		MESSAGE (FATAL_ERROR "No more than 2 arguments!")
 	ENDIF ()
 
-	MESSAGE (STATUS ${_ATS_DEPGEN_OUTPUT})
+	UNSET (${OUT})
+	FOREACH (_E ${IN})
+		SET (${OUT} "${${OUT}} ${_E}")
+	ENDFOREACH ()
 
-	UNSET (_ATS_DEPGEN_RESULT)
-	UNSET (_ATS_DEPGEN_OUTPUT)
-	UNSET (_ATS_DEPGEN_ERROR)
+	STRING (STRIP "${${OUT}}" ${OUT})
+
+	UNSET (_E)
+ENDMACRO ()
+
+MACRO (ATS_AUX_STRING_TO_LIST IN OUT)
+
+	IF (${ARGC} EQUAL 2)
+
+		STRING (REGEX REPLACE "[ ]" ";" _TEMP ${IN})
+		SET (${OUT} ${_TEMP})
+		UNSET (_TEMP)
+	ENDIF ()
+	
+ENDMACRO ()
+
+
+MACRO (ATS_AUX_GET_C_FILE_NAME IN OUT)
+
+	STRING(REGEX REPLACE "\\.sats$" "_sats.c" ${OUT} ${IN})
+	STRING(REGEX REPLACE "\\.dats$" "_dats.c" ${OUT} ${${OUT}})
+
 ENDMACRO ()
