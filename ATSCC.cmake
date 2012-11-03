@@ -5,7 +5,7 @@
 # Generate dependencies for a single source file.
 # Call it like this: ATS_DEPGEN (A_VAR ${A_SINGLE_FILE})
 #
-# The output is a STRING, not a LIST.
+# The output is a LIST, not a STRING.
 #
 ##################################################################################
 MACRO (ATS_DEPGEN OUTPUT SRC)
