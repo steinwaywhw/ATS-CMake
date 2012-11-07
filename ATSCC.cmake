@@ -24,7 +24,7 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 	ATS_AUX_LIST_TO_STRING ("${ATS_INCLUDE}" _TEXT_INCLUDE)
 
 	# execute atsopt
-	IF (${SRC} MATCHES "\\.dats$")
+	IF (SRC MATCHES "\\.dats$")
 		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --dynamic ${SRC}")
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --dynamic ${SRC}
@@ -33,7 +33,7 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 			ERROR_VARIABLE _ATS_DEPGEN_ERROR
 			OUTPUT_STRIP_TRAILING_WHITESPACE
 			ERROR_STRIP_TRAILING_WHITESPACE)
-	ELSE ()
+	ELSEIF (SRC MATCHES "\\.sats$")
 		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --static ${SRC}")
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --static ${SRC}
@@ -86,7 +86,7 @@ ENDMACRO ()
 ##################################################################################
 MACRO (ATS_DEPGEN_C DEP)
 	FOREACH (_E ${${DEP}})
-		IF ("${_E}" MATCHES "\\.sats$|\\.dats$")
+		IF (_E MATCHES "\\.sats$|\\.dats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
 			LIST (APPEND ${DEP} "${_C}")
 		ENDIF ()
@@ -155,7 +155,6 @@ MACRO (ATS_COMPILE OUTPUT)
 
 	# iterate all files
 	FOREACH (_ATS_FILE ${_ATS_FILES})
-
 		# convert to absolute path
 		ATS_AUX_UNIFY_PATH ("${_ATS_FILE}" _ATS_FILE)
 
@@ -163,8 +162,9 @@ MACRO (ATS_COMPILE OUTPUT)
 		ATS_DEPGEN (_DEPENDENCY "${_ATS_FILE}")
 
 		# for static files
-		IF ("${_ATS_FILE}" MATCHES "\\.sats$")
+		IF (_ATS_FILE MATCHES "\\.sats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _SATS_C)
+			MESSAGE (STATUS "Generating target ${_SATS_C}")
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_SATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_SATS_C} --static ${_ATS_FILE}
@@ -172,14 +172,17 @@ MACRO (ATS_COMPILE OUTPUT)
 		  	)
 		  	LIST (APPEND _C_OUTPUT "${_SATS_C}")
 		# for dynamic files
-		ELSEIF ("${_ATS_FILE}" MATCHES "\\.dats$")
+		ELSEIF (_ATS_FILE MATCHES "\\.dats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _DATS_C)
+			MESSAGE (STATUS "Generating target ${_DATS_C}")
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_DATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_DATS_C} --dynamic ${_ATS_FILE}
 			    DEPENDS ${_ATS_FILE} ${_DEPENDENCY}
 		  	)
 		  	LIST (APPEND _C_OUTPUT "${_DATS_C}")
+		ELSE ()
+			MESSAGE (STATUS "What's WRONG!")
 		ENDIF ()
 	ENDFOREACH()
 
