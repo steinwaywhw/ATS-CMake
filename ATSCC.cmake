@@ -5,7 +5,7 @@
 # Generate dependencies for a single source file.
 # Call it like this: ATS_DEPGEN (A_VAR ${A_SINGLE_FILE})
 #
-# The output is a LIST, not a STRING.
+# The output is a STRING, not a LIST.
 #
 ##################################################################################
 MACRO (ATS_DEPGEN OUTPUT SRC)
@@ -17,10 +17,13 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 	MESSAGE (STATUS "*********************************")
 	MESSAGE (STATUS "Computing dependencies for ${SRC}")
 
-	ATS_AUX_UNIFY_PATH (${SRC} SRC)
+	# convert to absolute path
+	ATS_AUX_UNIFY_PATH ("${SRC}" SRC)
 
+	# for display
 	ATS_AUX_LIST_TO_STRING ("${ATS_INCLUDE}" _TEXT_INCLUDE)
 
+	# execute atsopt
 	IF (${SRC} MATCHES "\\.dats$")
 		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --dynamic ${SRC}")
 		EXECUTE_PROCESS (
@@ -41,15 +44,18 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 			ERROR_STRIP_TRAILING_WHITESPACE)
 	ENDIF ()
 
+	# it is determined by atsopt -dep1 output. no spaces allowed in any path.
 	STRING (REGEX REPLACE "^.*:" "" ${OUTPUT} ${_ATS_DEPGEN_OUTPUT})
     STRING (STRIP "${${OUTPUT}}" ${OUTPUT})
 
-    IF (${${OUTPUT}})
+    # if it has some dependencies
+   	IF (NOT "${${OUTPUT}}" STREQUAL "")
     	ATS_AUX_STRING_TO_LIST (${${OUTPUT}} ${OUTPUT})
     	ATS_DEPGEN_C (${OUTPUT})
     ENDIF ()
 
-    ATS_AUX_TO_ABSOLUTE_PATH (${OUTPUT} ${${OUTPUT}})
+    # convert to absolute paths
+    ATS_AUX_TO_ABSOLUTE_PATH (${${OUTPUT}} ${OUTPUT})
     FOREACH (_E ${${OUTPUT}})
     	MESSAGE (STATUS "Result: ${_E}")
     ENDFOREACH ()
@@ -80,9 +86,9 @@ ENDMACRO ()
 ##################################################################################
 MACRO (ATS_DEPGEN_C DEP)
 	FOREACH (_E ${${DEP}})
-		IF (${_E} MATCHES "\\.sats$|\\.dats$")
-			ATS_AUX_GET_C_FILE_NAME (${_E} _C)
-			LIST (APPEND ${DEP} ${_C})
+		IF ("${_E}" MATCHES "\\.sats$|\\.dats$")
+			ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
+			LIST (APPEND ${DEP} "${_C}")
 		ENDIF ()
 	ENDFOREACH ()
 ENDMACRO ()
@@ -113,10 +119,17 @@ ENDMACRO ()
 #
 ##################################################################################
 MACRO (ATS_AUX_UNIFY_PATH IN OUT)
-	GET_FILENAME_COMPONENT (${OUT} ${IN} REALPATH)
-	FILE (RELATIVE_PATH ${OUT} ${CMAKE_CURRENT_LIST_DIR} ${${OUT}})
-	SET (${OUT} ${CMAKE_CURRENT_LIST_DIR}/${${OUT}})
-	STRING (STRIP ${${OUT}} ${OUT})
+	# resolve soft/hard link?
+	GET_FILENAME_COMPONENT (${OUT} "${IN}" REALPATH)
+
+	# relative path to CMAKE_CURRENT_LIST_DIR
+	FILE (RELATIVE_PATH ${OUT} "${CMAKE_CURRENT_LIST_DIR}" "${${OUT}}")
+
+	# get the output 
+	SET (${OUT} "${CMAKE_CURRENT_LIST_DIR}/${${OUT}}")
+
+	# strip spaces
+	STRING (STRIP "${${OUT}}" ${OUT})
 ENDMACRO ()
 
 
@@ -140,29 +153,33 @@ MACRO (ATS_COMPILE OUTPUT)
 	SET (_ATS_FILES ${ARGN})
 	SET (_C_OUTPUT)
 
+	# iterate all files
 	FOREACH (_ATS_FILE ${_ATS_FILES})
 
-		ATS_AUX_UNIFY_PATH (${_ATS_FILE} _ATS_FILE)
-		ATS_DEPGEN (_DEPENDENCY ${_ATS_FILE})
+		# convert to absolute path
+		ATS_AUX_UNIFY_PATH ("${_ATS_FILE}" _ATS_FILE)
 
-		#FOR STATIC FILES
-		IF (${_ATS_FILE} MATCHES "\\.sats$")
-			ATS_AUX_GET_C_FILE_NAME (${_ATS_FILE} _SATS_C)
+		# get dependencies
+		ATS_DEPGEN (_DEPENDENCY "${_ATS_FILE}")
+
+		# for static files
+		IF ("${_ATS_FILE}" MATCHES "\\.sats$")
+			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _SATS_C)
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_SATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_SATS_C} --static ${_ATS_FILE}
 			    DEPENDS ${_ATS_FILE} ${_DEPENDENCY}
 		  	)
-		  	LIST (APPEND _C_OUTPUT ${_SATS_C})
-		#FOR DYNAMIC FILES
-		ELSEIF (${_ATS_FILE} MATCHES "\\.dats$")
-			ATS_AUX_GET_C_FILE_NAME (${_ATS_FILE} _DATS_C)
+		  	LIST (APPEND _C_OUTPUT "${_SATS_C}")
+		# for dynamic files
+		ELSEIF ("${_ATS_FILE}" MATCHES "\\.dats$")
+			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _DATS_C)
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_DATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_DATS_C} --dynamic ${_ATS_FILE}
 			    DEPENDS ${_ATS_FILE} ${_DEPENDENCY}
 		  	)
-		  	LIST (APPEND _C_OUTPUT ${_DATS_C})
+		  	LIST (APPEND _C_OUTPUT "${_DATS_C}")
 		ENDIF ()
 	ENDFOREACH()
 
@@ -195,7 +212,7 @@ ENDMACRO ()
 ##################################################################################
 MACRO (ATS_INCLUDE)
 	FOREACH (_PATH ${ARGN})
-		ATS_AUX_UNIFY_PATH (${_PATH} _PATH)
+		ATS_AUX_UNIFY_PATH ("${_PATH}" _PATH)
 		LIST (APPEND _INCLUDE -IATS "${_PATH}")
 	ENDFOREACH ()
 
@@ -222,31 +239,57 @@ MACRO (ATS_AUX_LIST_TO_STRING IN OUT)
 	UNSET (_E)
 ENDMACRO ()
 
+
+##################################################################################
+#
+# ATS_AUX_STRING_TO_LIST (IN OUT)
+#
+# Requirement: The string should be space separated. So, no space is allowed in
+# an element unless it is quoted according to UNIX standard.
+#
+#
+# TODO: UNIX_COMMAND? WINDOWS_COMMAND?
+#
+##################################################################################
 MACRO (ATS_AUX_STRING_TO_LIST IN OUT)
 
 	IF (${ARGC} EQUAL 2)
 
-		STRING (REGEX REPLACE "[ ]" ";" _TEMP ${IN})
-		SET (${OUT} ${_TEMP})
-		UNSET (_TEMP)
+		#STRING (REGEX REPLACE "[ ]" ";" _TEMP "${IN}")
+		#SET (${OUT} ${_TEMP})
+		#UNSET (_TEMP)
+		SEPARATE_ARGUMENTS (${OUT} UNIX_COMMAND "${IN}")
 	ENDIF ()
 	
 ENDMACRO ()
 
-
+##################################################################################
+#
+# ATS_AUX_GET_C_FILE_NAME (IN OUT)
+#
+# Compute a corresponing C file name for a SATS/DATS file
+#
+##################################################################################
 MACRO (ATS_AUX_GET_C_FILE_NAME IN OUT)
 
-	STRING(REGEX REPLACE "\\.sats$" "_sats.c" ${OUT} ${IN})
-	STRING(REGEX REPLACE "\\.dats$" "_dats.c" ${OUT} ${${OUT}})
+	STRING(REGEX REPLACE "\\.sats$" "_sats.c" ${OUT} "${IN}")	
+	STRING(REGEX REPLACE "\\.dats$" "_dats.c" ${OUT} "${${OUT}}")
 
 ENDMACRO ()
 
 
+##################################################################################
+#
+# ATS_AUX_TO_ABSOLUTE_PATH (OUTOUT ...)
+#
+# Compute absolute paths for a list of files.
+#
+##################################################################################
 MACRO (ATS_AUX_TO_ABSOLUTE_PATH OUTPUT)
 	UNSET (${OUTPUT})
 	FOREACH (_E ${ARGN})
-		GET_FILENAME_COMPONENT (_O ${_E} REALPATH)
-		LIST (APPEND ${OUTPUT} ${_O})
+		GET_FILENAME_COMPONENT (_O "${_E}" REALPATH)
+		LIST (APPEND ${OUTPUT} "${_O}")
 	ENDFOREACH ()
 	UNSET (_E)
 	UNSET (_O)
@@ -262,13 +305,13 @@ MACRO (ATS_IMPORT PACKAGE)
 
 	INCLUDE (ExternalProject)
 
-	#The ${PACKAGE}_DIR will be exported after the call to this macro
+	# The ${PACKAGE}_DIR will be exported after the call to this macro
 	SET (PACKAGE_DIR ${PACKAGE}_DIR)
 	FIND_PATH (${PACKAGE_DIR}	
 		${PACKAGE}
 		PATHS ${ATS_REPO})
 
-	#The ${PACKAGE}_FOUND will be exported if it is found
+	# The ${PACKAGE}_FOUND will be exported if it is found
 	INCLUDE (FindPackageHandleStandardArgs)
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS (${PACKAGE} DEFAULT_MSG ${PACKAGE_DIR})
 
@@ -286,7 +329,13 @@ MACRO (ATS_IMPORT PACKAGE)
 	   BINARY_DIR ${${PACKAGE_DIR}}/build
 	)
 
-	INCLUDE (${${PACKAGE_DIR}}/${PACKAGE}_IMPORT.cmake)
+	IF (NOT EXISTS "${${PACKAGE_DIR}}/${PACKAGE}_IMPORT.cmake")
+		EXECUTE_PROCESS (
+			COMMAND ${CMAKE_COMMAND} ..
+			WORKING_DIRECTORY ${${PACKAGE_DIR}}/build)
+	ENDIF ()
+
+	INCLUDE ("${${PACKAGE_DIR}}/${PACKAGE}_IMPORT.cmake")
 
 ENDMACRO ()
 
@@ -303,30 +352,29 @@ ENDMACRO ()
 #
 ##################################################################################
 MACRO (ATS_EXPORT PACKAGE)
-	SET (_FILE ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE}_IMPORT.cmake)
+	SET (_FILE "${CMAKE_CURRENT_LIST_DIR}/${PACKAGE}_IMPORT.cmake")
 	FILE (WRITE ${_FILE} "#AUTOGENERATED\n")
 
 	FOREACH (_ARG ${ARGN})
-		MESSAGE (STATUS ${_STATE} ":" ${_ARG})
 
-		IF (_ARG STREQUAL "INCLUDE_DIRS_C")
+		IF ("${_ARG}" STREQUAL "INCLUDE_DIRS_C")
 			SET (_STATE "INCLUDE_DIRS_C")
 
-		ELSEIF (_ARG STREQUAL "INCLUDE_DIRS_ATS")
+		ELSEIF ("${_ARG}" STREQUAL "INCLUDE_DIRS_ATS")
 			SET (_STATE "INCLUDE_DIRS_ATS")
 
-		ELSEIF (_ARG STREQUAL "LINK_DIRS")
+		ELSEIF ("${_ARG}" STREQUAL "LINK_DIRS")
 			SET (_STATE "LINK_DIRS")
 
 		ELSE ()
-			ATS_AUX_UNIFY_PATH (${_ARG} _ARG)
-			IF (_STATE STREQUAL "INCLUDE_DIRS_C")
+			ATS_AUX_UNIFY_PATH ("${_ARG}" _ARG)
+			IF ("${_STATE}" STREQUAL "INCLUDE_DIRS_C")
 				FILE (APPEND ${_FILE} "INCLUDE_DIRECTORIES (${_ARG})\n")
 
-			ELSEIF (_STATE STREQUAL "INCLUDE_DIRS_ATS")
+			ELSEIF ("${_STATE}" STREQUAL "INCLUDE_DIRS_ATS")
 				FILE (APPEND ${_FILE} "ATS_INCLUDE (${_ARG})\n")
 
-			ELSEIF (_STATE STREQUAL "LINK_DIRS")
+			ELSEIF ("${_STATE}" STREQUAL "LINK_DIRS")
 				FILE (APPEND ${_FILE} "LINK_DIRECTORIES (${_ARG})\n")
 
 			ENDIF ()
