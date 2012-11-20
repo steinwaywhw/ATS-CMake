@@ -45,7 +45,7 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 	ENDIF ()
 
 	# it is determined by atsopt -dep1 output. no spaces allowed in any path.
-	STRING (REGEX REPLACE "^.*:" "" ${OUTPUT} ${_ATS_DEPGEN_OUTPUT})
+	STRING (REGEX REPLACE "^.*:" "" ${OUTPUT} "${_ATS_DEPGEN_OUTPUT}")
     STRING (STRIP "${${OUTPUT}}" ${OUTPUT})
 
     # if it has some dependencies
