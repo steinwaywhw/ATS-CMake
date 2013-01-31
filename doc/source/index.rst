@@ -45,12 +45,12 @@ After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. B
 .. code-block:: bash
 
 	HelloWorld
-      ├─CMakeLists.txt
-      ├─hello.dats 
-      ├─hello.sats 
-      ├─main.dats      
-      └─build
-          └─...
+	+---CMakeLists.txt
+	+---hello.dats 
+	+---hello.sats 
+	+---main.dats
+	\---build
+	    \--- ...
 	    
 .. note::
 	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
