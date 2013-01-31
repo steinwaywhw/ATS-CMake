@@ -32,7 +32,7 @@ Quick Start
 
 * Start using it!
 
-Quick Demo
+Hello World
 =============
 
 Suppose you have a small project containing ``hello.sats``, ``hello.dats`` and ``main.dats``. Then, you need to write a ``CMakeLists.txt`` like the following
@@ -45,27 +45,38 @@ After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. B
 .. code-block:: bash
 
 	HelloWorld
-	├─CMakeLists.txt
-	├─hello.dats 
-	├─hello.sats 
-	├─main.dats      
-	└─build
-	    └─...
+      ├─CMakeLists.txt
+      ├─hello.dats 
+      ├─hello.sats 
+      ├─main.dats      
+      └─build
+          └─...
 	    
 .. note::
-	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. Here, I use a ``./build`` dir for this purpose
+	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
 
-Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. 
+Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``.::
 
-You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``.
+	>>> cd ./build
+	>>> cmake ..
+	...
+	>>> make
+	...
 
+.. note::
+	We use ``cmake ..`` because the present working directory is ``./build``, while the ``CMakeLists.txt`` is in the parent directory. Therefore, it is ``cmake ..`` instead of ``cmake .``. Pay attention.
+
+What's Next
+===========
+
+In the followings, I will try to cover more use cases, and then look into what's happening in the CMake modules, so that you can better use them, and even help me develop it.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   quick-start
+   
 
 
 

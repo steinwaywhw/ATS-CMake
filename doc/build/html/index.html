@@ -79,8 +79,8 @@
 </li>
 </ul>
 </div>
-<div class="section" id="quick-demo">
-<h1>Quick Demo<a class="headerlink" href="#quick-demo" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="hello-world">
+<h1>Hello World<a class="headerlink" href="#hello-world" title="Permalink to this headline">¶</a></h1>
 <p>Suppose you have a small project containing <tt class="docutils literal"><span class="pre">hello.sats</span></tt>, <tt class="docutils literal"><span class="pre">hello.dats</span></tt> and <tt class="docutils literal"><span class="pre">main.dats</span></tt>. Then, you need to write a <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt> like the following</p>
 <div class="highlight-cmake"><div class="highlight"><pre><span class="nb">CMAKE_MINIMUM_REQUIRED</span> <span class="p">(</span><span class="s">VERSION</span> <span class="s">2.8</span><span class="p">)</span>
 
@@ -114,7 +114,7 @@
 </pre></div>
 </div>
 <p>After you have a correct <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt>, we just need to invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. But please make sure that you have a correct project layout.</p>
-<div class="highlight-bash"><div class="highlight"><pre>HelloWorld
+<div class="highlight-bash"><div class="highlight"><pre>  HelloWorld
 ├─CMakeLists.txt
 ├─hello.dats
 ├─hello.sats
@@ -125,10 +125,16 @@
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">I suggest using <em>out-of-source</em> build, which makes everything clean, especially when you want to delete all temp files. See <a class="reference external" href="http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees">here</a> for more information. Here, I use a <tt class="docutils literal"><span class="pre">./build</span></tt> dir for this purpose</p>
+<p class="last">I suggest using <em>out-of-source</em> build, which makes everything clean, especially when you want to delete all temp files. See <a class="reference external" href="http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees">here</a> for more information. I use a <tt class="docutils literal"><span class="pre">./build</span></tt> dir for this purpose.</p>
 </div>
-<p>Now, go to <tt class="docutils literal"><span class="pre">./build</span></tt> and invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. It will generate a <tt class="docutils literal"><span class="pre">makefile</span></tt> for you under <tt class="docutils literal"><span class="pre">./build</span></tt>.</p>
-<p>You can invoke <tt class="docutils literal"><span class="pre">make</span></tt> now, to build the project as usual, and congratulations! The output binary will be under <tt class="docutils literal"><span class="pre">./build</span></tt>.</p>
+<p>Now, go to <tt class="docutils literal"><span class="pre">./build</span></tt> and invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. It will generate a <tt class="docutils literal"><span class="pre">makefile</span></tt> for you under <tt class="docutils literal"><span class="pre">./build</span></tt>. You can invoke <tt class="docutils literal"><span class="pre">make</span></tt> now, to build the project as usual, and congratulations! The output binary will be under <tt class="docutils literal"><span class="pre">./build</span></tt>.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="o">./</span><span class="n">build</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmake</span> <span class="o">..</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -155,7 +161,7 @@
   <ul>
 <li><a class="reference internal" href="#">Welcome</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
-<li><a class="reference internal" href="#quick-demo">Quick Demo</a><ul>
+<li><a class="reference internal" href="#hello-world">Hello World</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
