@@ -23,13 +23,42 @@ Quick Start
   		You need to setup environment variables ``ATSHOME`` and ``PATH`` properly. 
   		``ATS-CMake`` use them to locate your currently available ATS binaries.
 
-* Download this project. Particularly, ``FindATS.cmake`` and ``ATSCC.cmake``.
+* Download this project from `GitHub <https://github.com/steinwaywhw/ATS-CMake>`_. Particularly, ``FindATS.cmake`` and ``ATSCC.cmake``.
+
 * Copy those CMake modules into CMake module dir.
 
   .. note::
   		Normally, the module dir is ``/usr/share/cmake-x.x.x/Modules``. You can find more information at `CMake Website <http://cmake.org/>`_.
 
 * Start using it!
+
+Quick Demo
+=============
+
+Suppose you have a small project containing ``hello.sats``, ``hello.dats`` and ``main.dats``. Then, you need to write a ``CMakeLists.txt`` like the following
+
+.. literalinclude:: quick-demo.cmake
+   :language: cmake
+
+After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. But please make sure that you have a correct project layout.
+
+.. code-block:: bash
+
+	HelloWorld
+	├─CMakeLists.txt
+	├─hello.dats 
+	├─hello.sats 
+	├─main.dats      
+	└─build
+	    └─...
+	    
+.. note::
+	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. Here, I use a ``./build`` dir for this purpose
+
+Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. 
+
+You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``.
+
 
 Contents:
 

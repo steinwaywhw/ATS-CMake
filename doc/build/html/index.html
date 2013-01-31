@@ -67,7 +67,7 @@
 <tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> use them to locate your currently available ATS binaries.</p>
 </div>
 </li>
-<li><p class="first">Download this project. Particularly, <tt class="docutils literal"><span class="pre">FindATS.cmake</span></tt> and <tt class="docutils literal"><span class="pre">ATSCC.cmake</span></tt>.</p>
+<li><p class="first">Download this project from <a class="reference external" href="https://github.com/steinwaywhw/ATS-CMake">GitHub</a>. Particularly, <tt class="docutils literal"><span class="pre">FindATS.cmake</span></tt> and <tt class="docutils literal"><span class="pre">ATSCC.cmake</span></tt>.</p>
 </li>
 <li><p class="first">Copy those CMake modules into CMake module dir.</p>
 <div class="admonition note">
@@ -78,6 +78,57 @@
 <li><p class="first">Start using it!</p>
 </li>
 </ul>
+</div>
+<div class="section" id="quick-demo">
+<h1>Quick Demo<a class="headerlink" href="#quick-demo" title="Permalink to this headline">¶</a></h1>
+<p>Suppose you have a small project containing <tt class="docutils literal"><span class="pre">hello.sats</span></tt>, <tt class="docutils literal"><span class="pre">hello.dats</span></tt> and <tt class="docutils literal"><span class="pre">main.dats</span></tt>. Then, you need to write a <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt> like the following</p>
+<div class="highlight-cmake"><div class="highlight"><pre><span class="nb">CMAKE_MINIMUM_REQUIRED</span> <span class="p">(</span><span class="s">VERSION</span> <span class="s">2.8</span><span class="p">)</span>
+
+<span class="c">#Specify project name as HELLOWORLD, and project language as C. Yes, it is C</span>
+<span class="nb">PROJECT</span> <span class="p">(</span><span class="s">HELLOWORLD</span> <span class="s">C</span><span class="p">)</span>     
+
+<span class="c">#Actually, this makes CMake to find ATSCC.cmake using FindATS.cmake</span>
+<span class="nb">FIND_PACKAGE</span> <span class="p">(</span><span class="s">ATS</span> <span class="s">REQUIRED</span><span class="p">)</span> 
+
+<span class="c">#The ATS_FOUND is automatically set by FindATS.cmake module</span>
+<span class="nb">IF</span> <span class="p">(</span><span class="s">NOT</span> <span class="s">ATS_FOUND</span><span class="p">)</span> 
+    <span class="nb">MESSAGE</span> <span class="p">(</span><span class="s">FATAL_ERROR</span> <span class="s2">&quot;ATS Not Found!&quot;</span><span class="p">)</span>
+<span class="nb">ENDIF</span> <span class="p">()</span>
+
+<span class="c">#ATS_COMIPLE is the core of this project. To put it simple, </span>
+<span class="c">#you just specify related SATS/DATS files here, and use a variable</span>
+<span class="c">#like TEST_SRC to store the outputs. ATS_COMPILE will analyze their </span>
+<span class="c">#dependencies, compile them into C files, and store those C file </span>
+<span class="c">#names into TEST_SRC</span>
+
+<span class="c">#You can use ATS_INCLUDE to add search paths for the compiler to</span>
+<span class="c">#find proper SATS/HATS files.    </span>
+<span class="nb">ATS_COMPILE</span> <span class="p">(</span><span class="s">TEST_SRC</span> 
+    <span class="s">hello.sats</span> 
+    <span class="s">hello.dats</span> 
+    <span class="s">main.dats</span><span class="p">)</span>
+
+<span class="c">#It generate the final file &quot;test&quot; using all the C files in TEST_SRC.</span>
+<span class="c">#And this is a standard CMake command</span>
+<span class="nb">ADD_EXECUTABLE</span> <span class="p">(</span><span class="s">test</span> <span class="o">${</span><span class="nv">TEST_SRC</span><span class="o">}</span><span class="p">)</span> 
+</pre></div>
+</div>
+<p>After you have a correct <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt>, we just need to invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. But please make sure that you have a correct project layout.</p>
+<div class="highlight-bash"><div class="highlight"><pre>HelloWorld
+├─CMakeLists.txt
+├─hello.dats
+├─hello.sats
+├─main.dats
+└─build
+    └─...
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I suggest using <em>out-of-source</em> build, which makes everything clean, especially when you want to delete all temp files. See <a class="reference external" href="http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees">here</a> for more information. Here, I use a <tt class="docutils literal"><span class="pre">./build</span></tt> dir for this purpose</p>
+</div>
+<p>Now, go to <tt class="docutils literal"><span class="pre">./build</span></tt> and invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. It will generate a <tt class="docutils literal"><span class="pre">makefile</span></tt> for you under <tt class="docutils literal"><span class="pre">./build</span></tt>.</p>
+<p>You can invoke <tt class="docutils literal"><span class="pre">make</span></tt> now, to build the project as usual, and congratulations! The output binary will be under <tt class="docutils literal"><span class="pre">./build</span></tt>.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -103,7 +154,8 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome</a></li>
-<li><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
+<li><a class="reference internal" href="#quick-demo">Quick Demo</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
