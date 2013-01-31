@@ -8,6 +8,12 @@ Welcome
 
 This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
 
+Features
+========
+
+* It uses CMake, which is cross platform.
+* Automatic dependency resolving. This is especially useful, and is first supported by this projected.
+* Easy to use.
 
 Quick Start
 =============
@@ -17,7 +23,7 @@ Quick Start
   .. note:: 
 		Version 2.8.3+ required, since ``ATS-CMake`` uses ``CMAKE_CURRENT_LIST_DIR`` variable
 
-* Install ATS.
+* Install ATS from `ATS Website <http://www.ats-lang.org/>`_.
 
   .. note:: 
   		You need to setup environment variables ``ATSHOME`` and ``PATH`` properly. 
@@ -45,12 +51,12 @@ After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. B
 .. code-block:: bash
 
 	HelloWorld
-      ├─CMakeLists.txt
-      ├─hello.dats 
-      ├─hello.sats 
-      ├─main.dats      
-      └─build
-          └─...
+	+---CMakeLists.txt
+	+---hello.dats 
+	+---hello.sats 
+	+---main.dats
+	\---build
+	    \--- ...
 	    
 .. note::
 	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
@@ -63,19 +69,21 @@ Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for
 	>>> make
 	...
 
-Contents:
+.. note::
+	We use ``cmake ..`` because the present working directory is ``./build``, while the ``CMakeLists.txt`` is in the parent directory. Therefore, it is ``cmake ..`` instead of ``cmake .``. Pay attention.
+
+What's Next
+===========
+
+In the followings, I will try to cover more use cases, and then look into what's happening in the CMake modules, so that you can better use them, and even help me develop it.
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
-   quick-start
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   examples
+   inside
+   contacts

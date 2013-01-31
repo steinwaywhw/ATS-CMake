@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ATS CMake latest documentation" href="#" />
-    <link rel="next" title="Quick Start" href="quick-start.html" /> 
+    <link rel="next" title="&lt;no title&gt;" href="examples.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="quick-start.html" title="Quick Start"
+          <a href="examples.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li><a href="#">ATS CMake latest documentation</a> &raquo;</li> 
       </ul>
@@ -51,6 +51,14 @@
 <h1>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h1>
 <p>This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.</p>
 </div>
+<div class="section" id="features">
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>It uses CMake, which is cross platform.</li>
+<li>Automatic dependency resolving. This is especially useful, and is first supported by this projected.</li>
+<li>Easy to use.</li>
+</ul>
+</div>
 <div class="section" id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <ul>
@@ -60,7 +68,7 @@
 <p class="last">Version 2.8.3+ required, since <tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> uses <tt class="docutils literal"><span class="pre">CMAKE_CURRENT_LIST_DIR</span></tt> variable</p>
 </div>
 </li>
-<li><p class="first">Install ATS.</p>
+<li><p class="first">Install ATS from <a class="reference external" href="http://www.ats-lang.org/">ATS Website</a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">You need to setup environment variables <tt class="docutils literal"><span class="pre">ATSHOME</span></tt> and <tt class="docutils literal"><span class="pre">PATH</span></tt> properly.
@@ -114,13 +122,13 @@
 </pre></div>
 </div>
 <p>After you have a correct <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt>, we just need to invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. But please make sure that you have a correct project layout.</p>
-<div class="highlight-bash"><div class="highlight"><pre>  HelloWorld
-├─CMakeLists.txt
-├─hello.dats
-├─hello.sats
-├─main.dats
-└─build
-    └─...
+<div class="highlight-bash"><div class="highlight"><pre>HelloWorld
++---CMakeLists.txt
++---hello.dats
++---hello.sats
++---main.dats
+<span class="se">\-</span>--build
+    <span class="se">\-</span>-- ...
 </pre></div>
 </div>
 <div class="admonition note">
@@ -135,20 +143,25 @@
 <span class="gp">...</span>
 </pre></div>
 </div>
-<p>Contents:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We use <tt class="docutils literal"><span class="pre">cmake</span> <span class="pre">..</span></tt> because the present working directory is <tt class="docutils literal"><span class="pre">./build</span></tt>, while the <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt> is in the parent directory. Therefore, it is <tt class="docutils literal"><span class="pre">cmake</span> <span class="pre">..</span></tt> instead of <tt class="docutils literal"><span class="pre">cmake</span> <span class="pre">.</span></tt>. Pay attention.</p>
+</div>
+</div>
+<div class="section" id="what-s-next">
+<h1>What&#8217;s Next<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h1>
+<p>In the followings, I will try to cover more use cases, and then look into what&#8217;s happening in the CMake modules, so that you can better use them, and even help me develop it.</p>
+</div>
+<div class="section" id="contents">
+<h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inside.html">Inside the Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#findats-module">FindATS Module</a></li>
+</ul>
+</li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
-</ul>
 </div>
 
 
@@ -160,16 +173,18 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome</a></li>
+<li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
-<li><a class="reference internal" href="#hello-world">Hello World</a><ul>
+<li><a class="reference internal" href="#hello-world">Hello World</a></li>
+<li><a class="reference internal" href="#what-s-next">What&#8217;s Next</a></li>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
 </ul>
 </li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="quick-start.html"
-                        title="next chapter">Quick Start</a></p>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -199,7 +214,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="quick-start.html" title="Quick Start"
+          <a href="examples.html" title="&lt;no title&gt;"
              >next</a> |</li>
         <li><a href="#">ATS CMake latest documentation</a> &raquo;</li> 
       </ul>

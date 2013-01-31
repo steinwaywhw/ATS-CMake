@@ -8,6 +8,12 @@ Welcome
 
 This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
 
+Features
+========
+
+* It uses CMake, which is cross platform.
+* Automatic dependency resolving. This is especially useful, and is first supported by this projected.
+* Easy to use.
 
 Quick Start
 =============
@@ -17,7 +23,7 @@ Quick Start
   .. note:: 
 		Version 2.8.3+ required, since ``ATS-CMake`` uses ``CMAKE_CURRENT_LIST_DIR`` variable
 
-* Install ATS.
+* Install ATS from `ATS Website <http://www.ats-lang.org/>`_.
 
   .. note:: 
   		You need to setup environment variables ``ATSHOME`` and ``PATH`` properly. 
@@ -71,19 +77,13 @@ What's Next
 
 In the followings, I will try to cover more use cases, and then look into what's happening in the CMake modules, so that you can better use them, and even help me develop it.
 
-Contents:
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
-   
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   examples
+   inside
+   contacts
