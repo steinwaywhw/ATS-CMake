@@ -65,12 +65,17 @@ ATSCC Module
 ``ATS_INCLUDE (path ...)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+This macro will add all paths as directories to look up for ``SATS``/``HATS`` files. This will result in multiple ``IATS`` flags for ``atsopt``. The paths should be relative to ``${CMAKE_CURRENT_LIST_DIR}``, or they are absolute paths.
 
-This macro will add all paths as directories to look for SATS/HATS files. This will result in multiple IATS flags for atsopt. The paths should be relative to $(CMAKE_CURRENT_LIST_DIR), or they are absolute paths.
+.. admonition:: Example 
 
-Example: ATS_INCLUDE (SATS HATS /usr/include/ats028/SATS)
+	.. code-block:: cmake
 
-Result: ${CMAKE_CURRENT_LIST_DIR}/SATS, ${CMAKE_CURRENT_LIST_DIR}/HATS and /usr/include/ats028/SATS will be added to atsopt -IATS flags.
+		ATS_INCLUDE (SATS HATS /usr/include/ats028/SATS)
+
+.. admonition:: Result
+
+	``${CMAKE_CURRENT_LIST_DIR}/SATS``, ``${CMAKE_CURRENT_LIST_DIR}/HATS`` and ``/usr/include/ats028/SATS`` will be added to ``atsopt -IATS`` flags.
 
 ATS_COMPILE (output src ...)
 This macro will compile all sources provided into corresponding C sources, and store all generated C file names into ${output} for further use. Those file names are absolute paths.
