@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to ATS CMake’s documentation! &mdash; ATS CMake latest documentation</title>
+    <title>Welcome &mdash; ATS CMake latest documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -47,9 +47,37 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-ats-cmake-s-documentation">
-<h1>Welcome to ATS CMake&#8217;s documentation!<a class="headerlink" href="#welcome-to-ats-cmake-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome">
+<h1>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h1>
 <p>This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.</p>
+</div>
+<div class="section" id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p class="first">Install CMake. You can download them from <a class="reference external" href="http://cmake.org/">CMake Website</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Version 2.8.3+ required, since <tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> uses <tt class="docutils literal"><span class="pre">CMAKE_CURRENT_LIST_DIR</span></tt> variable</p>
+</div>
+</li>
+<li><p class="first">Install ATS.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You need to setup environment variables <tt class="docutils literal"><span class="pre">ATSHOME</span></tt> and <tt class="docutils literal"><span class="pre">PATH</span></tt> properly.
+<tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> use them to locate your currently available ATS binaries.</p>
+</div>
+</li>
+<li><p class="first">Download this project. Particularly, <tt class="docutils literal"><span class="pre">FindATS.cmake</span></tt> and <tt class="docutils literal"><span class="pre">ATSCC.cmake</span></tt>.</p>
+</li>
+<li><p class="first">Copy those CMake modules into CMake module dir.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Normally, the module dir is <tt class="docutils literal"><span class="pre">/usr/share/cmake-x.x.x/Modules</span></tt>. You can find more information at <a class="reference external" href="http://cmake.org/">CMake Website</a>.</p>
+</div>
+</li>
+<li><p class="first">Start using it!</p>
+</li>
+</ul>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -74,7 +102,8 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to ATS CMake&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#">Welcome</a></li>
+<li><a class="reference internal" href="#quick-start">Quick Start</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
