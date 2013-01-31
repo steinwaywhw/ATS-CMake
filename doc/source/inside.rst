@@ -6,12 +6,24 @@ This page is a reference to all macros/functions in ``ATSCC.cmake`` and ``FindAT
 FindATS Module
 --------------
 
-.. sidebar:: Sidebar Title
-   :subtitle: Optional Sidebar Subtitle
+.. sidebar:: Quick Ref
+   
+	Input
+   		``ATSHOME`` environment variable.
+   
+	Output (CMake variables)
+   		``ATS_HOME``
+   		``ATSCC``
+   		``ATSOPT``
+   		``ATSCC_FLAGS``
+   		``ATS_INCLUDE_DIRS``
+   		``ATS_LIBRARIES``
 
-   Subsequent indented lines comprise
-   the body of the sidebar, and are
-   interpreted as body elements.
+	Effects (CMake variables for internal usage)
+   		``ATS_INCLUDE_DIR``
+   		``ATS_LIBRARY``
+   		``CMAKE_C_COMPILER``
+
 
 This is a standard CMake ``FindXXX`` module. CMake community has a documentation about how to write a ``FindXXX`` module, `here <http://www.cmake.org/Wiki/CMake_FAQ#Writing_FindXXX.cmake_files>`_. 
 
@@ -51,7 +63,7 @@ ATSCC Module
 --------------
 
 ``ATS_INCLUDE (path ...)``
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 This macro will add all paths as directories to look for SATS/HATS files. This will result in multiple IATS flags for atsopt. The paths should be relative to $(CMAKE_CURRENT_LIST_DIR), or they are absolute paths.

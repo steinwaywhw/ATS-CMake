@@ -6,7 +6,18 @@
 Welcome
 =====================================
 
+.. sidebar:: Table of Contents
+  
+	.. toctree::
+	   :maxdepth: 2
+
+	   examples
+	   inside
+	   contacts
+
 This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
+
+
 
 Features
 ========
@@ -76,14 +87,3 @@ What's Next
 ===========
 
 In the followings, I will try to cover more use cases, and then look into what's happening in the CMake modules, so that you can better use them, and even help me develop it.
-
-
-Contents
-========
-
-.. toctree::
-   :maxdepth: 2
-
-   examples
-   inside
-   contacts
