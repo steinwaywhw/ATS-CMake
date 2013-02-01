@@ -81,9 +81,21 @@ This macro will add all paths as directories to look up for ``SATS``/``HATS`` fi
 ``ATS_COMPILE (output src ...)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. sidebar:: Quick Ref
+   
+	Input
+   		``OUTPUT`` 
+   			The name of the variable where to store output filenames. It is a list, not a string.
+   		Source filenames
+   			Specify all related files to be compiled. Seperate them using space. Only ``DATS`` and ``SATS`` files are needed.
+   
+	Output
+		``OUTPUT`` 
+			All fullpaths of C files will be stored in ``OUTPUT``.
+
 This macro will compile all sources provided into corresponding C sources, and store all generated C file names into ``${output}`` for further use. Those file names are **absolute paths**.
 
-The dependencies will be automatically generated. This includes two parts. *First*, all ``staload``(for ``sats`` file) and ``#include``(for ``hats`` file) will be detected using ``atsopt -dep1``. *Second*, all generated C files will also be involved in dependencies. For example, if ``a.sats`` includes ``a.hats``, and ``a.dats`` staload ``a.sats``. Then a dependency ``a_dats.c -> a_sats.c`` will be generated so that if ``a.hats`` changes, ``a_dats.c`` will be regenerated.
+The dependencies will be automatically generated. This includes two parts. *First*, all ``staload`` (for ``sats`` file) and ``#include`` (for ``hats`` file) will be detected using ``atsopt -dep1``. *Second*, all generated C files will also be involved in dependencies. For example, if ``a.sats`` includes ``a.hats``, and ``a.dats`` staload ``a.sats``. Then a dependency ``a_dats.c -> a_sats.c`` will be generated so that if ``a.hats`` changes, ``a_dats.c`` will be regenerated.
 
 .. admonition:: Example
 
@@ -96,6 +108,9 @@ The dependencies will be automatically generated. This includes two parts. *Firs
 	 All C files compiled from ATS files are stored in ``TEST_SRC``. They are ``SATS/hello_sats.c``, ``DATS/hello_dats.c`` and ``DATS/main_dats.c``.
 
 Note that there is no need to specify ``CATS`` files and ``HATS`` files, since ``atsopt`` will automatically find them in the paths specified by ``ATS_INCLUDE ()``.
+
+.. warning::
+	CMake has some really confusing terms, like **list** and **a list of strings**. Basically, a list is a single string where inner items are seperated using semicolon. 
 
 Useful CMake Commands
 ------------------------
