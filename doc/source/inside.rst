@@ -13,7 +13,7 @@ FindATS Module
 ``FIND_PACKAGE (ATS REQUIRED)``
 -----------------------------------
 
-.. sidebar:: Quick Ref
+.. note:: Quick Ref
    
 	* Input ``ATSHOME`` environment variable.
 	* Output (CMake variables)
