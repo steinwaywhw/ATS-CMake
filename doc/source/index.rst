@@ -79,7 +79,7 @@ After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. B
 .. note::
 	I suggest using *out-of-source* :index:`build <single: out-of-source build>`, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
 
-Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``.::
+Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``
 
 	>>> cd ./build
 	>>> cmake ..
