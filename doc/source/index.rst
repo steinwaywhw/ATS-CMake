@@ -8,6 +8,8 @@ Welcome
 
 This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
 
+The project is hosted on `GitHub <https://github.com/steinwaywhw/ATS-CMake>`_. Welcome to contribute.
+
 Table of Contents
 ===========================
   
@@ -16,24 +18,25 @@ Table of Contents
 
 	   examples
 	   inside
+	   cmake
 	   contacts
 
-Features
-========
+:index:`Features`
+=====================
 
 * It uses CMake, which is cross platform.
 * Automatic dependency resolving. This is especially useful, and is first supported by this projected.
 * Easy to use.
 
-Quick Start
-=============
+:index:`Quick Start`
+======================
 
-* Install CMake. You can download them from `CMake Website <http://cmake.org/>`_.
+* :index:`Install CMake`. You can download them from `CMake Website <http://cmake.org/>`_.
 
   .. note:: 
 		Version 2.8.3+ required, since ``ATS-CMake`` uses ``CMAKE_CURRENT_LIST_DIR`` variable
 
-* Install ATS from `ATS Website <http://www.ats-lang.org/>`_.
+* :index:`Install ATS` from `ATS Website <http://www.ats-lang.org/>`_.
 
   .. note:: 
   		You need to setup environment variables ``ATSHOME`` and ``PATH`` properly. 
@@ -41,7 +44,7 @@ Quick Start
 
 * Download this project from `GitHub <https://github.com/steinwaywhw/ATS-CMake>`_. Particularly, ``FindATS.cmake`` and ``ATSCC.cmake``.
 
-* Copy those CMake modules into CMake module dir.
+* Copy those :index:`CMake modules` into CMake module dir.
 
   .. note::
   		Normally, the module dir is ``/usr/share/cmake-x.x.x/Modules``. You can find more information at `CMake Website <http://cmake.org/>`_.
@@ -69,7 +72,7 @@ After you have a correct ``CMakeLists.txt``, we just need to invoke ``cmake``. B
 	    \--- ...
 	    
 .. note::
-	I suggest using *out-of-source* build, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
+	I suggest using *out-of-source* :index:`build <single: out-of-source build>`, which makes everything clean, especially when you want to delete all temp files. See `here <http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees>`_ for more information. I use a ``./build`` dir for this purpose.
 
 Now, go to ``./build`` and invoke ``cmake``. It will generate a ``makefile`` for you under ``./build``. You can invoke ``make`` now, to build the project as usual, and congratulations! The output binary will be under ``./build``.::
 

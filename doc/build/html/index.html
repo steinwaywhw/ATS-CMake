@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ATS CMake latest documentation" href="#" />
-    <link rel="next" title="&lt;no title&gt;" href="examples.html" /> 
+    <link rel="next" title="Examples" href="examples.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="examples.html" title="&lt;no title&gt;"
+          <a href="examples.html" title="Examples"
              accesskey="N">next</a> |</li>
         <li><a href="#">ATS CMake latest documentation</a> &raquo;</li> 
       </ul>
@@ -50,9 +50,39 @@
   <div class="section" id="welcome">
 <h1>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h1>
 <p>This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.</p>
+<p>The project is hosted on <a class="reference external" href="https://github.com/steinwaywhw/ATS-CMake">GitHub</a>. Welcome to contribute.</p>
+</div>
+<div class="section" id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#multiple-executables">Multiple Executables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inside.html">Inside the Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inside.html#findats-module">FindATS Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#find-package-ats-required"><tt class="docutils literal"><span class="pre">FIND_PACKAGE</span> <span class="pre">(ATS</span> <span class="pre">REQUIRED)</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inside.html#atscc-module">ATSCC Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#ats-include-path"><tt class="docutils literal"><span class="pre">ATS_INCLUDE</span> <span class="pre">(path</span> <span class="pre">...)</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#ats-compile-output-src"><tt class="docutils literal"><span class="pre">ATS_COMPILE</span> <span class="pre">(output</span> <span class="pre">src</span> <span class="pre">...)</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#ats-depgen-output-src-for-internal-usage-only"><tt class="docutils literal"><span class="pre">ATS_DEPGEN</span> <span class="pre">(OUTPUT</span> <span class="pre">SRC)</span></tt>  <sub>(For internal usage only)</sub></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#ats-depgen-c-dep-for-internal-usage-only"><tt class="docutils literal"><span class="pre">ATS_DEPGEN_C</span> <span class="pre">(DEP)</span></tt>  <sub>(For internal usage only)</sub></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmake.html">Useful CMake Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmake.html#target-link-libraries-target-libs"><tt class="docutils literal"><span class="pre">TARGET_LINK_LIBRARIES</span> <span class="pre">(target</span> <span class="pre">libs...)</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmake.html#add-executable-output-src"><tt class="docutils literal"><span class="pre">ADD_EXECUTABLE</span> <span class="pre">(output</span> <span class="pre">src</span> <span class="pre">...)</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
+</ul>
+</div>
+</div></blockquote>
 </div>
 <div class="section" id="features">
-<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<h1><span class="target" id="index-0"></span>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li>It uses CMake, which is cross platform.</li>
 <li>Automatic dependency resolving. This is especially useful, and is first supported by this projected.</li>
@@ -60,15 +90,15 @@
 </ul>
 </div>
 <div class="section" id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<h1><span class="target" id="index-1"></span>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <ul>
-<li><p class="first">Install CMake. You can download them from <a class="reference external" href="http://cmake.org/">CMake Website</a>.</p>
+<li><p class="first"><span class="target" id="index-2"></span>Install CMake. You can download them from <a class="reference external" href="http://cmake.org/">CMake Website</a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Version 2.8.3+ required, since <tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> uses <tt class="docutils literal"><span class="pre">CMAKE_CURRENT_LIST_DIR</span></tt> variable</p>
 </div>
 </li>
-<li><p class="first">Install ATS from <a class="reference external" href="http://www.ats-lang.org/">ATS Website</a>.</p>
+<li><p class="first"><span class="target" id="index-3"></span>Install ATS from <a class="reference external" href="http://www.ats-lang.org/">ATS Website</a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">You need to setup environment variables <tt class="docutils literal"><span class="pre">ATSHOME</span></tt> and <tt class="docutils literal"><span class="pre">PATH</span></tt> properly.
@@ -77,7 +107,7 @@
 </li>
 <li><p class="first">Download this project from <a class="reference external" href="https://github.com/steinwaywhw/ATS-CMake">GitHub</a>. Particularly, <tt class="docutils literal"><span class="pre">FindATS.cmake</span></tt> and <tt class="docutils literal"><span class="pre">ATSCC.cmake</span></tt>.</p>
 </li>
-<li><p class="first">Copy those CMake modules into CMake module dir.</p>
+<li><p class="first">Copy those <span class="target" id="index-4"></span>CMake modules into CMake module dir.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Normally, the module dir is <tt class="docutils literal"><span class="pre">/usr/share/cmake-x.x.x/Modules</span></tt>. You can find more information at <a class="reference external" href="http://cmake.org/">CMake Website</a>.</p>
@@ -133,7 +163,7 @@
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">I suggest using <em>out-of-source</em> build, which makes everything clean, especially when you want to delete all temp files. See <a class="reference external" href="http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees">here</a> for more information. I use a <tt class="docutils literal"><span class="pre">./build</span></tt> dir for this purpose.</p>
+<p class="last">I suggest using <em>out-of-source</em> <span class="target" id="index-5"></span>build, which makes everything clean, especially when you want to delete all temp files. See <a class="reference external" href="http://www.cmake.org/Wiki/CMake_FAQ#Out-of-source_build_trees">here</a> for more information. I use a <tt class="docutils literal"><span class="pre">./build</span></tt> dir for this purpose.</p>
 </div>
 <p>Now, go to <tt class="docutils literal"><span class="pre">./build</span></tt> and invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. It will generate a <tt class="docutils literal"><span class="pre">makefile</span></tt> for you under <tt class="docutils literal"><span class="pre">./build</span></tt>. You can invoke <tt class="docutils literal"><span class="pre">make</span></tt> now, to build the project as usual, and congratulations! The output binary will be under <tt class="docutils literal"><span class="pre">./build</span></tt>.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="o">./</span><span class="n">build</span>
@@ -152,17 +182,6 @@
 <h1>What&#8217;s Next<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h1>
 <p>In the followings, I will try to cover more use cases, and then look into what&#8217;s happening in the CMake modules, so that you can better use them, and even help me develop it.</p>
 </div>
-<div class="section" id="contents">
-<h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="inside.html">Inside the Code</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="inside.html#findats-module">FindATS Module</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 
 
           </div>
@@ -173,18 +192,18 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome</a></li>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a><ul>
+</ul>
+</li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#hello-world">Hello World</a></li>
 <li><a class="reference internal" href="#what-s-next">What&#8217;s Next</a></li>
-<li><a class="reference internal" href="#contents">Contents</a><ul>
-</ul>
-</li>
 </ul>
 
   <h4>Next topic</h4>
   <p class="topless"><a href="examples.html"
-                        title="next chapter">&lt;no title&gt;</a></p>
+                        title="next chapter">Examples</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -214,7 +233,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="examples.html" title="&lt;no title&gt;"
+          <a href="examples.html" title="Examples"
              >next</a> |</li>
         <li><a href="#">ATS CMake latest documentation</a> &raquo;</li> 
       </ul>

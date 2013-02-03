@@ -111,6 +111,7 @@ ENDMACRO ()
 # ATS_DEPGEN_C (DEP)
 #
 # Expend dependencies for generated C files.
+#
 # For example: 
 # 	If we have 		1.sats <- 2.sats
 #	Then we add 	1_sats.c <- 2_sats.c
