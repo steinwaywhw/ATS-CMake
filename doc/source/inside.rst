@@ -15,7 +15,8 @@ FindATS Module
 
 .. admonition:: Quick Ref
    
-	* Input ``ATSHOME`` environment variable.
+	* Input 
+		``ATSHOME`` environment variable.
 	* Output (CMake variables)
    		``ATS_HOME``
    		``ATSCC``
