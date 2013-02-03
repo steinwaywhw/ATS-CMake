@@ -51,3 +51,4 @@ I put the CMake modules under ``${CMAKE_CURRENT_SOURCE_DIR}/cmake``. And the ``C
 
 .. literalinclude:: LocalModule/CMakeLists.txt
    :language: cmake
+   :emphasize-lines: 4,5
