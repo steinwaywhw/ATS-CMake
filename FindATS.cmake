@@ -1,4 +1,4 @@
-##*********************************************************************##
+﻿##*********************************************************************##
 ##                                                                     ##
 ##                              ATS-CMake                              ##
 ##                                                                     ##
@@ -68,3 +68,7 @@ SET (ATSOPT ${ATS_HOME}/bin/atsopt)
 MESSAGE (STATUS "ATS Home: ${ATS_HOME}")
 MESSAGE (STATUS "Includes: ${ATS_INCLUDE_DIRS}")
 MESSAGE (STATUS "Libraries: ${ATS_LIBRARIES}")
+
+IF (NOT ${CMAKE_CURRENT_LIST_DIR})
+	SET (CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ENDIF ()
