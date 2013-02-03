@@ -6,7 +6,10 @@
 Welcome
 =====================================
 
-.. sidebar:: Table of Contents
+This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
+
+Table of Contents
+===========================
   
 	.. toctree::
 	   :maxdepth: 2
@@ -14,10 +17,6 @@ Welcome
 	   examples
 	   inside
 	   contacts
-
-This is a project aiming at developing a build tool for ATS. It is based on CMake. Currently, it provides some very useful CMake modules for ATS users to simplify building processes. In the near future, it will support downloading artifacts from a server to help you utilize third party ATS libraries.
-
-
 
 Features
 ========

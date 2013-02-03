@@ -3,15 +3,19 @@ Inside the Code
 
 This page is a reference to all macros/functions in ``ATSCC.cmake`` and ``FindATS.cmake``.
 
+.. admonition:: Tips for filename/path
+
+	Most of commands/macros in CMake, and most of commands of Lunix require filenames/paths contain NO space. So, I assume no space in any of the filenames/paths. If you get errors, first check if there is any space in any filenames/paths, and remove them. It is always good to make a space-free filename/path.
+
 FindATS Module
 --------------
 
-.. sidebar:: Quick Ref
+.. topic:: Quick Ref
    
-	Input
+	* Input
    		``ATSHOME`` environment variable.
    
-	Output (CMake variables)
+	* Output (CMake variables)
    		``ATS_HOME``
    		``ATSCC``
    		``ATSOPT``
@@ -19,7 +23,7 @@ FindATS Module
    		``ATS_INCLUDE_DIRS``
    		``ATS_LIBRARIES``
 
-	Effects (CMake variables for internal usage)
+	* Effects (CMake variables for internal usage)
    		``ATS_INCLUDE_DIR``
    		``ATS_LIBRARY``
    		``CMAKE_C_COMPILER``
@@ -60,6 +64,21 @@ In my ``FindATS.cmake``, I use environment variable ``ATSHOME`` to lookup ATS bi
 ``CMAKE_C_COMPILER``:
 	*For internal usage only*. This is a trick. First, ``atscc`` will call ``atsopt`` and then ``gcc`` to compile the code. Second, ``atscc`` includes many useful arguments for ``gcc`` so that it can correctly find all runtime dependencies. Thrid, by setting C compiler to ``atscc``, CMake will invoke ``atscc`` to compile C code, thus utilizing ``atscc``'s extra arguments to locate all necessary headers and libraries. You won't need to use this. But I think it's better to let you know this.
 
+.. admonition:: Example 
+
+	.. code-block:: cmake
+
+		FIND_PACKAGE (ATS REQUIRED) 
+
+		IF (NOT ATS_FOUND) 
+		    MESSAGE (FATAL_ERROR "ATS Not Found!")
+		ENDIF ()
+
+.. admonition:: Result
+
+	If ATS is found, those commands/macros/variables will be avaiable. Otherwise, ``ATS Not Found!`` will be printed and CMake will terminate.
+
+
 ATSCC Module
 --------------
 
@@ -81,15 +100,15 @@ This macro will add all paths as directories to look up for ``SATS``/``HATS`` fi
 ``ATS_COMPILE (output src ...)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. sidebar:: Quick Ref
+.. topic:: Quick Ref
    
-	Input
+	* Input
    		``OUTPUT`` 
    			The name of the variable where to store output filenames. It is a list, not a string.
    		Source filenames
    			Specify all related files to be compiled. Seperate them using space. Only ``DATS`` and ``SATS`` files are needed.
    
-	Output
+	* Output
 		``OUTPUT`` 
 			All fullpaths of C files will be stored in ``OUTPUT``.
 
@@ -110,7 +129,35 @@ The dependencies will be automatically generated. This includes two parts. *Firs
 Note that there is no need to specify ``CATS`` files and ``HATS`` files, since ``atsopt`` will automatically find them in the paths specified by ``ATS_INCLUDE ()``.
 
 .. warning::
-	CMake has some really confusing terms, like **list** and **a list of strings**. Basically, a list is a single string where inner items are seperated using semicolon. 
+	CMake has some really confusing terms, like **list** and **string**. Basically, a list is a single string where inner items are seperated using semicolon, while a string is seperated using spaces. ``set (MyString "Hello World")`` will give you a string, while ``set (MyList Hello World)`` will give you a list, which is stored as ``Hello;World``. Also, you need to pay attention to quotes. ``set (MyString2 "${MyString}")`` will be a string, while ``set (MyList2 ${MyString})`` will be a list, since it will evaluate to ``set (MyList2 Hello World)``. You should search "CMake List String" on Google for more information.
+
+``ATS_DEPGEN (OUTPUT SRC)``  :sub:`(For internal usage only)`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. topic:: Quick Ref
+
+	* Input:
+		A single source file path.
+
+	* Output:
+		``${OUTPUT}`` will contain space separated dependencies. It is a string, not a list. All dependencies are fullpaths.
+
+It is called by ``ATS_COMPILE ()``. It runs ``atsopt`` to generate ATS dependencies. For example, if ``hello.dats`` depends on ``hello.sats``, it will append the fullpath of ``hello.sats`` to the output. Later, it will call ``ATS_DEPGEN_C ()`` to generate C dependencies. Take the above example, it will make ``hello_dats.c`` depends on ``hello_sats.c``. This enables ``hello_dats.c`` to be regenerated when ``hello.sats`` is modified.
+
+``ATS_DEPGEN_C (DEP)``  :sub:`(For internal usage only)`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. topic:: Quick Ref
+
+	* Input:
+		All dependencies for a source file.
+
+	* Output:
+		C dependencies will be appended.
+
+It is called by ``ATS_DEPGEN ()``. For example, if we have ``1.sats <- 2.sats``, then we add ``1_sats.c <- 2_sats.c``.
+
+This is useful when ``1.sats`` inludes a ``HATS`` file. When the HATS file updates, ``1.sats`` is not changed, but ``1_sats.c`` is changed. And since ``2.sats`` depends on ``1.sats`` and it is not changed, ``2_sats.c`` is not recompiled. However, it should be recompiled since the actual meaning of ``1.sats`` has been changed. Thus, we need to append C dependencies.
 
 Useful CMake Commands
 ------------------------
