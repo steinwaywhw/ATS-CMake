@@ -59,6 +59,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html#multiple-executables">Multiple Executables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#local-cmake-modules">Local CMake Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inside.html">Inside the Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inside.html#findats-module">FindATS Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="inside.html#find-package-ats-required"><tt class="docutils literal"><span class="pre">FIND_PACKAGE</span> <span class="pre">(ATS</span> <span class="pre">REQUIRED)</span></tt></a></li>
@@ -153,12 +154,13 @@
 </div>
 <p>After you have a correct <tt class="docutils literal"><span class="pre">CMakeLists.txt</span></tt>, we just need to invoke <tt class="docutils literal"><span class="pre">cmake</span></tt>. But please make sure that you have a correct project layout.</p>
 <div class="highlight-bash"><div class="highlight"><pre>HelloWorld
-+---CMakeLists.txt
-+---hello.dats
-+---hello.sats
-+---main.dats
+|   CMakeLists.txt
+|   hello.dats
+|   hello.sats
+|   main.dats
+|
 <span class="se">\-</span>--build
-    <span class="se">\-</span>-- ...
+        ...
 </pre></div>
 </div>
 <div class="admonition note">

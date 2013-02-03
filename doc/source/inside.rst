@@ -5,7 +5,7 @@ This page is a reference to all macros/functions in ``ATSCC.cmake`` and ``FindAT
 
 .. admonition:: Tips for filename/path
 
-	Most of commands/macros in CMake, and most of commands of Lunix require filenames/paths contain NO space. So, I assume no space in any of the filenames/paths. If you get errors, first check if there is any space in any filenames/paths, and remove them. It is always good to make a :index:`space-free` filename/path.
+	Most of commands/macros in CMake, and most of commands of Lunix require filenames/paths contain **NO** space. So, I assume no space in any of the filenames/paths. If you get errors, first check if there is any space in any filenames/paths, and remove them. It is always good to make a :index:`space-free` filename/path.
 
 FindATS Module
 ===============
@@ -13,10 +13,9 @@ FindATS Module
 ``FIND_PACKAGE (ATS REQUIRED)``
 -----------------------------------
 
-.. topic:: Quick Ref
+.. sidebar:: Quick Ref
    
-	* Input
-   		``ATSHOME`` environment variable.
+	* Input ``ATSHOME`` environment variable.
 	* Output (CMake variables)
    		``ATS_HOME``
    		``ATSCC``
@@ -99,7 +98,7 @@ This macro will add all paths as directories to look up for ``SATS``/``HATS`` fi
 ``ATS_COMPILE (output src ...)``
 ----------------------------------
 
-.. topic:: Quick Ref
+.. sidebar:: Quick Ref
    
 	* Input
    		``OUTPUT`` 
@@ -132,7 +131,7 @@ Note that there is no need to specify ``CATS`` files and ``HATS`` files, since `
 ``ATS_DEPGEN (OUTPUT SRC)``  :sub:`(For internal usage only)`
 ------------------------------------------------------------------
 
-.. topic:: Quick Ref
+.. sidebar:: Quick Ref
 
 	* Input:
 		A single source file path.
@@ -142,10 +141,12 @@ Note that there is no need to specify ``CATS`` files and ``HATS`` files, since `
 
 It is called by ``ATS_COMPILE ()``. It runs ``atsopt`` to generate ATS dependencies. For example, if ``hello.dats`` depends on ``hello.sats``, it will append the fullpath of ``hello.sats`` to the output. Later, it will call ``ATS_DEPGEN_C ()`` to generate C dependencies. Take the above example, it will make ``hello_dats.c`` depends on ``hello_sats.c``. This enables ``hello_dats.c`` to be regenerated when ``hello.sats`` is modified.
 
+
+
 ``ATS_DEPGEN_C (DEP)``  :sub:`(For internal usage only)`
 -----------------------------------------------------------
 
-.. topic:: Quick Ref
+.. sidebar:: Quick Ref
 
 	* Input:
 		All dependencies for a source file.
