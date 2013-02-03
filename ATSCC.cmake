@@ -299,7 +299,15 @@ MACRO (ATS_AUX_STRING_TO_LIST IN OUT)
 		#STRING (REGEX REPLACE "[ ]" ";" _TEMP "${IN}")
 		#SET (${OUT} ${_TEMP})
 		#UNSET (_TEMP)
-		SEPARATE_ARGUMENTS (${OUT} UNIX_COMMAND "${IN}")
+
+		# Workaround for CMake 2.6
+	    IF (${CMAKE_VERSION} VERSION_LESS "2.8.3")
+                SET (${OUT} "${IN}")
+                SEPARATE_ARGUMENTS (${OUT})
+        ELSE ()
+                SEPARATE_ARGUMENTS (${OUT} UNIX_COMMAND "${IN}")
+        ENDIF ()
+        
 	ENDIF ()
 	
 ENDMACRO ()

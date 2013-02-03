@@ -102,8 +102,12 @@
 <li><p class="first"><span class="target" id="index-3"></span>Install ATS from <a class="reference external" href="http://www.ats-lang.org/">ATS Website</a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">You need to setup environment variables <tt class="docutils literal"><span class="pre">ATSHOME</span></tt> and <tt class="docutils literal"><span class="pre">PATH</span></tt> properly.
-<tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> use them to locate your currently available ATS binaries.</p>
+<p>You need to setup environment variables <tt class="docutils literal"><span class="pre">ATSHOME</span></tt> and <tt class="docutils literal"><span class="pre">PATH</span></tt> properly.
+<tt class="docutils literal"><span class="pre">ATS-CMake</span></tt> use them to locate your currently available ATS binaries. For example:</p>
+<div class="last highlight-python"><pre>export ATSHOME=/cs/coursedata/cs320/ATS029
+export ATSHOMERELOC=ATS-0.2.9
+export PATH=$PATH:$ATSHOME/bin</pre>
+</div>
 </div>
 </li>
 <li><p class="first">Download this project from <a class="reference external" href="https://github.com/steinwaywhw/ATS-CMake">GitHub</a>. Particularly, <tt class="docutils literal"><span class="pre">FindATS.cmake</span></tt> and <tt class="docutils literal"><span class="pre">ATSCC.cmake</span></tt>.</p>

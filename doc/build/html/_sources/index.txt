@@ -40,7 +40,11 @@ Table of Contents
 
   .. note:: 
   		You need to setup environment variables ``ATSHOME`` and ``PATH`` properly. 
-  		``ATS-CMake`` use them to locate your currently available ATS binaries.
+  		``ATS-CMake`` use them to locate your currently available ATS binaries. For example::
+
+  			export ATSHOME=/cs/coursedata/cs320/ATS029
+  			export ATSHOMERELOC=ATS-0.2.9
+  			export PATH=$PATH:$ATSHOME/bin
 
 * Download this project from `GitHub <https://github.com/steinwaywhw/ATS-CMake>`_. Particularly, ``FindATS.cmake`` and ``ATSCC.cmake``.
 
