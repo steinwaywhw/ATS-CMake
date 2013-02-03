@@ -13,7 +13,7 @@ FindATS Module
 ``FIND_PACKAGE (ATS REQUIRED)``
 -----------------------------------
 
-.. note:: Quick Ref
+.. admonition:: Quick Ref
    
 	* Input ``ATSHOME`` environment variable.
 	* Output (CMake variables)
@@ -98,7 +98,7 @@ This macro will add all paths as directories to look up for ``SATS``/``HATS`` fi
 ``ATS_COMPILE (output src ...)``
 ----------------------------------
 
-.. sidebar:: Quick Ref
+.. admonition:: Quick Ref
    
 	* Input
    		``OUTPUT`` 
@@ -131,7 +131,7 @@ Note that there is no need to specify ``CATS`` files and ``HATS`` files, since `
 ``ATS_DEPGEN (OUTPUT SRC)``  :sub:`(For internal usage only)`
 ------------------------------------------------------------------
 
-.. sidebar:: Quick Ref
+.. admonition:: Quick Ref
 
 	* Input:
 		A single source file path.
@@ -146,7 +146,7 @@ It is called by ``ATS_COMPILE ()``. It runs ``atsopt`` to generate ATS dependenc
 ``ATS_DEPGEN_C (DEP)``  :sub:`(For internal usage only)`
 -----------------------------------------------------------
 
-.. sidebar:: Quick Ref
+.. admonition:: Quick Ref
 
 	* Input:
 		All dependencies for a source file.
