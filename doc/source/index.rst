@@ -25,7 +25,7 @@ Table of Contents
 =====================
 
 * It uses CMake, which is cross platform.
-* Automatic dependency resolving. This is especially useful, and is first supported by this projected.
+* Automatic dependency resolving. This is especially useful, and is first supported by this project.
 * Easy to use.
 
 :index:`Quick Start`
