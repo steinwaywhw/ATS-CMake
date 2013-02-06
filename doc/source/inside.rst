@@ -55,11 +55,11 @@ In my ``FindATS.cmake``, I use :index:`environment variable <single: ATSHOME>` `
 ``ATS_VERBOSE``:
 	False by defalut. If set to ture, it will produce more informations during making process. Please set it only after ``FIND_PACKAGE (ATS ...)``. Otherwise, it will be reset to default value inside the ``FindATS`` module.
 
-	.. admonition:: Example
+.. admonition:: Example
 
-		.. code-block:: cmake
+	.. code-block:: cmake
 
-			SET (ATS_VERBOSE True)
+		SET (ATS_VERBOSE True)
 
 ``ATSCC``:
 	It is set to the full path of ``atscc`` executable.
