@@ -59,6 +59,11 @@ In my ``FindATS.cmake``, I use :index:`environment variable <single: ATSHOME>` `
 
 	.. code-block:: cmake
 
+		FIND_PACKAGE (ATS REQUIRED) 
+		IF (NOT ATS_FOUND) 
+		    MESSAGE (FATAL_ERROR "ATS Not Found!")
+		ENDIF ()
+		
 		SET (ATS_VERBOSE True)
 
 ``ATSCC``:
