@@ -51,8 +51,10 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 		MESSAGE (FATAL_ERROR "Only support one source file!")
 	ENDIF ()
 
-	MESSAGE (STATUS "*********************************")
-	MESSAGE (STATUS "Computing dependencies for ${SRC}")
+	IF (ATS_VERBOSE)
+		MESSAGE (STATUS "*********************************")
+		MESSAGE (STATUS "Computing dependencies for ${SRC}")
+	ENDIF ()
 
 	# convert to absolute path
 	ATS_AUX_UNIFY_PATH ("${SRC}" SRC)
@@ -62,7 +64,9 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 
 	# execute atsopt
 	IF (SRC MATCHES "\\.dats$")
-		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --dynamic ${SRC}")
+		IF (ATS_VERBOSE)
+			MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --dynamic ${SRC}")
+		ENDIF ()
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --dynamic ${SRC}
 			RESULT_VARIABLE _ATS_DEPGEN_RESULT
@@ -71,7 +75,9 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 			OUTPUT_STRIP_TRAILING_WHITESPACE
 			ERROR_STRIP_TRAILING_WHITESPACE)
 	ELSEIF (SRC MATCHES "\\.sats$")
-		MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --static ${SRC}")
+		IF (ATS_VERBOSE)
+			MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen=1 --static ${SRC}")
+		ENDIF ()
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen=1 --static ${SRC}
 			RESULT_VARIABLE _ATS_DEPGEN_RESULT
@@ -93,9 +99,11 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 
     # convert to absolute paths
     ATS_AUX_TO_ABSOLUTE_PATH (${${OUTPUT}} ${OUTPUT})
-    FOREACH (_E ${${OUTPUT}})
-    	MESSAGE (STATUS "Result: ${_E}")
-    ENDFOREACH ()
+    IF (ATS_VERBOSE)
+	    FOREACH (_E ${${OUTPUT}})
+	    	MESSAGE (STATUS "Result: ${_E}")
+	    ENDFOREACH ()
+	ENDIF ()
 
     UNSET (_E)
 	UNSET (_ATS_DEPGEN_RESULT)
@@ -203,7 +211,9 @@ MACRO (ATS_COMPILE OUTPUT)
 		# for static files
 		IF (_ATS_FILE MATCHES "\\.sats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _SATS_C)
-			MESSAGE (STATUS "Generating target ${_SATS_C}")
+			IF (ATS_VERBOSE)
+				MESSAGE (STATUS "Generating target ${_SATS_C}")
+			ENDIF ()
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_SATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_SATS_C} --static ${_ATS_FILE}
@@ -213,7 +223,9 @@ MACRO (ATS_COMPILE OUTPUT)
 		# for dynamic files
 		ELSEIF (_ATS_FILE MATCHES "\\.dats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_ATS_FILE}" _DATS_C)
-			MESSAGE (STATUS "Generating target ${_DATS_C}")
+			IF (ATS_VERBOSE)
+				MESSAGE (STATUS "Generating target ${_DATS_C}")
+			ENDIF ()
 			ADD_CUSTOM_COMMAND (
 			    OUTPUT ${_DATS_C} 
 			    COMMAND ${ATSOPT} ${ATS_INCLUDE} --output ${_DATS_C} --dynamic ${_ATS_FILE}
@@ -221,7 +233,7 @@ MACRO (ATS_COMPILE OUTPUT)
 		  	)
 		  	LIST (APPEND _C_OUTPUT "${_DATS_C}")
 		ELSE ()
-			MESSAGE (STATUS "What's WRONG!")
+			MESSAGE (STATUS "Not SATS/DATS file, ignored.")
 		ENDIF ()
 	ENDFOREACH()
 
