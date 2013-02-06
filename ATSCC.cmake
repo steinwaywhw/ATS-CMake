@@ -233,7 +233,7 @@ MACRO (ATS_COMPILE OUTPUT)
 		  	)
 		  	LIST (APPEND _C_OUTPUT "${_DATS_C}")
 		ELSE ()
-			MESSAGE (STATUS "Not SATS/DATS file, ignored.")
+			MESSAGE (STATUS "Not SATS/DATS file, ignored - ${_ATS_FILE}")
 		ENDIF ()
 	ENDFOREACH()
 
