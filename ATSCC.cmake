@@ -157,14 +157,15 @@ ENDMACRO ()
 #
 ##################################################################################
 MACRO (ATS_AUX_UNIFY_PATH IN OUT)
-	# resolve soft/hard link?
+	# resolve soft/hard link? YES!
 	GET_FILENAME_COMPONENT (${OUT} "${IN}" REALPATH)
 
+	# THIS CAUSE BUGS WHEN IT IS SOFT/HARD LINK
 	# relative path to CMAKE_CURRENT_LIST_DIR
-	FILE (RELATIVE_PATH ${OUT} "${CMAKE_CURRENT_LIST_DIR}" "${${OUT}}")
+	# FILE (RELATIVE_PATH ${OUT} "${CMAKE_CURRENT_LIST_DIR}" "${${OUT}}")
 
 	# get the output 
-	SET (${OUT} "${CMAKE_CURRENT_LIST_DIR}/${${OUT}}")
+	# SET (${OUT} "${CMAKE_CURRENT_LIST_DIR}/${${OUT}}")
 
 	# strip spaces
 	STRING (STRIP "${${OUT}}" ${OUT})
