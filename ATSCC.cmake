@@ -35,6 +35,9 @@
 ## THE SOFTWARE.
 ##
 
+# a global variable for all targets, for internal use only
+SET (_SOURCE_LIST)
+
 ##################################################################################
 #
 # ATS_DEPGEN (OUTPUT SRC)
@@ -133,8 +136,13 @@ ENDMACRO ()
 MACRO (ATS_DEPGEN_C DEP)
 	FOREACH (_E ${${DEP}})
 		IF (_E MATCHES "\\.sats$|\\.dats$")
-			ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
-			LIST (APPEND ${DEP} "${_C}")
+			LIST (FIND "${_SOURCE_LIST}" ${_E} _RESULT)
+			IF (_RESULT GREATER -1)
+				ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
+				LIST (APPEND ${DEP} "${_C}")
+			ELSEIF (ATS_VERBOSE)
+				MESSAGE (STATUS "Ignoring C dependency for ${_E}")
+			ENDIF ()
 		ENDIF ()
 	ENDFOREACH ()
 ENDMACRO ()
@@ -199,6 +207,9 @@ MACRO (ATS_COMPILE OUTPUT)
 
 	SET (_ATS_FILES ${ARGN})
 	SET (_C_OUTPUT)
+
+	# setup global variable for all targets, for internal use only
+	SET (_SOURCE_LIST ${_ATS_FILES})
 
 	# iterate all files
 	FOREACH (_ATS_FILE ${_ATS_FILES})
