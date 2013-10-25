@@ -35,70 +35,6 @@
 ## THE SOFTWARE.
 ##
 
-# a global variable for all targets, for internal use only
-SET (_SOURCE_LIST)
-
-
-	SET (_DEP_ALL)
-	SET (_CONTINUE Ture)
-
-	WHILE (_CONTINUE)
-		SET (_CONTINUE False)
-
-		FOREACH (_DEP ${_DEP_ALL})
-			STRING (TOUPPER "BOOST_${DEP}_DEPENDS" DEP_DEPENDS)
-
-			FOREACH (DEPDEP ${${DEP_DEPENDS}})
-				LIST (FIND _DEP_ALL ${DEPDEP} DEPDEP_INDEX)
-
-				IF (DEPDEP_INDEX EQUAL -1)
-					LIST (APPEND _DEP_ALL ${DEPDEP})
-					SET (_CONTINUE TRUE)
-				ENDIF()
-			ENDFOREACH()
-		ENDFOREACH()
-	ENDWHILE()
-
-##################################################################################
-#
-# ATS_DEPGEN_TRANS (DEP_ALL)
-#
-# Extend the ${${DEP_ALL}} to be the transitive closure.
-#
-##################################################################################
-MACRO (ATS_DEPGEN_TRANS DEP_ALL) 
-
-	# ${DEP_ALL} is the list var
-	# ${${DEP_ALL}} is the list content
-
-	SET (_CONTINUE Ture)
-
-	WHILE (_CONTINUE)
-		SET (_CONTINUE False)
-
-		FOREACH (_DEP ${${DEP_ALL}})
-			IF (_DEP MATCHES "\\.sats$|\\.dats$")
-				UNSET (_DEP_DEP_ALL)
-				ATS_DEPGEN (_DEP_DEP_ALL "${_DEP}")
-
-				FOREACH (_DEP_DEP ${_DEP_DEP_ALL})
-					LIST (FIND ${DEP_ALL} "${_DEP_DEP}" _RESULT)
-
-					IF (_RESULT EQUAL -1)
-						LIST (APPEND ${DEP_ALL} "${_DEP_DEP}")
-						SET (_CONTINUE True)
-					ENDIF ()
-				ENDFOREACH ()
-			ENDIF ()
-		ENDFOREACH()
-	ENDWHILE()
-
-	IF (NOT "${${DEP_ALL}}" STREQUAL "")
-		LIST (REMOVE_DUPLICATES ${DEP_ALL})
-	ENDIF ()
-
-ENDMACRO ()
-
 ##################################################################################
 #
 # ATS_DEPGEN (OUTPUT SRC)
@@ -106,10 +42,7 @@ ENDMACRO ()
 # Generate dependencies for a single source file.
 # Call it like this: ATS_DEPGEN (A_VAR ${A_SINGLE_FILE})
 #
-# 
-# Note on the usage of "OUTPUT" argument:
-# ${OUTPUT} is the variable name given by the user, "A_VAR" in this case
-# ${${OUTPUT}} is the result, which is indeed ${A_VAR}.
+# The output is a STRING, not a LIST.
 #
 ##################################################################################
 MACRO (ATS_DEPGEN OUTPUT SRC)
@@ -118,6 +51,10 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 		MESSAGE (FATAL_ERROR "Only support one source file!")
 	ENDIF ()
 
+	IF (ATS_VERBOSE)
+		MESSAGE (STATUS "*********************************")
+		MESSAGE (STATUS "Computing dependencies for ${SRC}")
+	ENDIF ()
 
 	# convert to absolute path
 	ATS_AUX_UNIFY_PATH ("${SRC}" SRC)
@@ -127,7 +64,9 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 
 	# execute atsopt
 	IF (SRC MATCHES "\\.dats$")
-
+		IF (ATS_VERBOSE)
+			MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen --dynamic ${SRC}")
+		ENDIF ()
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen --dynamic ${SRC}
 			RESULT_VARIABLE _ATS_DEPGEN_RESULT
@@ -136,7 +75,9 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 			OUTPUT_STRIP_TRAILING_WHITESPACE
 			ERROR_STRIP_TRAILING_WHITESPACE)
 	ELSEIF (SRC MATCHES "\\.sats$")
-
+		IF (ATS_VERBOSE)
+			MESSAGE (STATUS "${ATSOPT} ${_TEXT_INCLUDE} --depgen --static ${SRC}")
+		ENDIF ()
 		EXECUTE_PROCESS (
 			COMMAND ${ATSOPT} ${ATS_INCLUDE} --depgen --static ${SRC}
 			RESULT_VARIABLE _ATS_DEPGEN_RESULT
@@ -153,30 +94,50 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
     # if it has some dependencies
    	IF (NOT "${${OUTPUT}}" STREQUAL "")
     	ATS_AUX_STRING_TO_LIST (${${OUTPUT}} ${OUTPUT})
-
-    	FOREACH (_ENTRY ${${OUTPUT}})
-    		IF (_ENTRY MATCHES "\\.sats$|\\.dats$")
-    			LIST (FIND _SOURCE_LIST "${_ENTRY}" _RESULT)
-    			IF (_RESULT GREATER -1)
-    				ATS_AUX_GET_C_FILE_NAME ("${_ENTRY}" _C_DEP)
-    				LIST (APPEND ${OUTPUT} "${_C_DEP}")
-    			ENDIF ()
-    		ENDIF ()
-    	ENDFOREACH ()
+    	ATS_DEPGEN_C (${OUTPUT})
     ENDIF ()
 
     # convert to absolute paths
     ATS_AUX_TO_ABSOLUTE_PATH (${${OUTPUT}} ${OUTPUT})
+    IF (ATS_VERBOSE)
+	    FOREACH (_E ${${OUTPUT}})
+	    	MESSAGE (STATUS "Result: ${_E}")
+	    ENDFOREACH ()
+	ENDIF ()
 
-    UNSET (_ENTRY)
-    UNSET (_C_DEP)
+    UNSET (_E)
 	UNSET (_ATS_DEPGEN_RESULT)
 	UNSET (_ATS_DEPGEN_OUTPUT)
 	UNSET (_ATS_DEPGEN_ERROR)
 	UNSET (_TEXT_INCLUDE)
-	UNSET (_RESULT)
 ENDMACRO ()
 
+##################################################################################
+#
+# ATS_DEPGEN_C (DEP)
+#
+# Expend dependencies for generated C files.
+#
+# For example: 
+# 	If we have 		1.sats <- 2.sats
+#	Then we add 	1_sats.c <- 2_sats.c
+#
+# This is useful when 1.sats inludes a HATS file. When the HATS file updates, 
+# 1.sats is not changed, but 1_sats.c is changed. And since 2.sats depends on
+# 1.sats and it is not changed, 2_sats.c is not recompiled. However, it should 
+# be recompiled since the actual meaning of 1.sats has been changed.
+#
+# The output is a STRING, not a LIST.
+#
+##################################################################################
+MACRO (ATS_DEPGEN_C DEP)
+	FOREACH (_E ${${DEP}})
+		IF (_E MATCHES "\\.sats$|\\.dats$")
+			ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
+			LIST (APPEND ${DEP} "${_C}")
+		ENDIF ()
+	ENDFOREACH ()
+ENDMACRO ()
 
 MACRO (ATS_TYPE_CHECK SRC)
 	EXECUTE_PROCESS (
@@ -239,15 +200,6 @@ MACRO (ATS_COMPILE OUTPUT)
 	SET (_ATS_FILES ${ARGN})
 	SET (_C_OUTPUT)
 
-	# setup global variable for all targets, for internal use only
-	FOREACH (_ATS_FILE ${_ATS_FILES})
-		IF (_ATS_FILE MATCHES "\\.dats$|\\.sats$")
-			ATS_AUX_UNIFY_PATH ("${_ATS_FILE}" _ATS_FILE)
-			LIST (APPEND _SOURCE_LIST "${_ATS_FILE}")
-		ENDIF ()
-	ENDFOREACH ()
-
-
 	# iterate all files
 	FOREACH (_ATS_FILE ${_ATS_FILES})
 		# convert to absolute path
@@ -255,15 +207,6 @@ MACRO (ATS_COMPILE OUTPUT)
 
 		# get dependencies
 		ATS_DEPGEN (_DEPENDENCY "${_ATS_FILE}")
-		ATS_DEPGEN_TRANS (_DEPENDENCY)
-
-	    IF (ATS_VERBOSE)
-	    	MESSAGE (STATUS "*********************************")
-	    	MESSAGE (STATUS "DEPGEN for ${_ATS_FILE}")
-		    FOREACH (_ENTRY ${_DEPENDENCY})
-		    	MESSAGE (STATUS "    ${_ENTRY}")
-		    ENDFOREACH ()
-		ENDIF ()
 
 		# for static files
 		IF (_ATS_FILE MATCHES "\\.sats$")
@@ -296,9 +239,6 @@ MACRO (ATS_COMPILE OUTPUT)
 
 	SET (${OUTPUT} ${_C_OUTPUT})
 
-	MESSAGE (STATUS "*********************************")
-
-
 	UNSET (_ATS_FILES)
 	UNSET (_ATS_FILE)
 	UNSET (_C_OUTPUT)
@@ -312,8 +252,6 @@ MACRO (ATS_INCLUDE_RESET)
 	UNSET (ATS_INCLUDE)
 	SET (ATS_INCLUDE)
 ENDMACRO ()
-
-
 
 
 ##################################################################################
