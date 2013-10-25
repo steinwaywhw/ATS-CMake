@@ -35,6 +35,19 @@
 ## THE SOFTWARE.
 ##
 
+
+##################################################################################
+#
+# ATS_FILES 
+#
+# This is a list of files begin compiled.
+#
+##################################################################################
+
+SET (ATS_FILES)
+
+
+
 ##################################################################################
 #
 # ATS_DEPGEN (OUTPUT SRC)
@@ -87,7 +100,7 @@ MACRO (ATS_DEPGEN OUTPUT SRC)
 			ERROR_STRIP_TRAILING_WHITESPACE)
 	ENDIF ()
 
-	# it is determined by atsopt -dep1 output. no spaces allowed in any path.
+	# it is determined by atsopt -dep1 output. No spaces allowed in any path.
 	STRING (REGEX REPLACE "^.*:" "" ${OUTPUT} "${_ATS_DEPGEN_OUTPUT}")
     STRING (STRIP "${${OUTPUT}}" ${OUTPUT})
 
@@ -135,6 +148,20 @@ MACRO (ATS_DEPGEN_C DEP)
 		IF (_E MATCHES "\\.sats$|\\.dats$")
 			ATS_AUX_GET_C_FILE_NAME ("${_E}" _C)
 			LIST (APPEND ${DEP} "${_C}")
+
+			LIST (FIND ATS_FILES "${_E}" _FOUND)
+			IF (_FOUND EQUAL -1)
+				IF (NOT EXISTS ${_C})
+					EXECUTE_PROCESS (
+						COMMAND touch ${_C}
+						RESULT_VARIABLE _ATS_TC_RESULT
+						OUTPUT_VARIABLE _ATS_TC_OUTPUT
+						ERROR_VARIABLE _ATS_TC_ERROR
+						OUTPUT_STRIP_TRAILING_WHITESPACE
+						ERROR_STRIP_TRAILING_WHITESPACE)
+					MESSAGE (STATUS "Executed: touch ${_C}")
+				ENDIF()
+			ENDIF ()
 		ENDIF ()
 	ENDFOREACH ()
 ENDMACRO ()
@@ -198,6 +225,13 @@ MACRO (ATS_COMPILE OUTPUT)
 	ENDIF ()
 
 	SET (_ATS_FILES ${ARGN})
+
+	# set global variable ATS_FILES to record files being compiled.
+	FOREACH (_ATS_FILE ${_ATS_FILES})
+		ATS_AUX_UNIFY_PATH ("${_ATS_FILE}" _ATS_FILE)
+		LIST (APPEND ATS_FILES "${_ATS_FILE}")
+	ENDFOREACH ()
+
 	SET (_C_OUTPUT)
 
 	# iterate all files
